@@ -1,0 +1,12 @@
+### 최초 로그인 요청
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "email": "liam@naver.com",
+  "password": "1234"
+}
+### 토큰 테스트
+POST http://localhost:8080/api/v1/test
+Authorization: Bearer
+###
