@@ -12,7 +12,7 @@
 # 시작하기
 H2 데이터 베이스를 사용하여 별도 설정없이 바로 구동가능합니다.
 resource/data/data.sql 경로에 최초 데이터를 삽입할 수 있도록 했으니 참고바랍니다.
-그리고 scr/http/request.http 파일에 http 요청테스트 부분 참고바랍니다. 
+그리고 scr/http/request.http 파일에 http 요청테스트 있으니 이부분 참고바랍니다. 
 
 ## 구현하며 배운점
 https://velog.io/@hhg1993/SpringSecurity-ExceptionHandling%EC%97%90-%EB%8C%80%ED%95%9C-%EA%B0%9C%EC%9D%B8%EC%A0%81%EC%9D%B8-%EC%98%A4%ED%95%B4
