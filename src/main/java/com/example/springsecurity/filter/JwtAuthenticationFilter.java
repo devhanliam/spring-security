@@ -1,7 +1,8 @@
 package com.example.springsecurity.filter;
 
-import com.example.springsecurity.domain.service.JwtService;
+import com.example.springsecurity.authentication.JwtAuthenticationToken;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -16,21 +17,20 @@ import java.util.Arrays;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String tokenFromRequest = getTokenFromRequest(request);
-        if (jwtService.validateToken(tokenFromRequest)) {
-            Authentication authentication = jwtService.getAuthentication(tokenFromRequest);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
+        JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(tokenFromRequest, "");
+        Authentication authentication = authenticationManager.authenticate(jwtAuthenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);
     }
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String[] excludePath = {"/login", "/h2/",};
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String[] excludePath = {"/login", "/h2/","/api/v1/main"};
         String path = request.getRequestURI();
         return Arrays.stream(excludePath).anyMatch(path::startsWith);
     }

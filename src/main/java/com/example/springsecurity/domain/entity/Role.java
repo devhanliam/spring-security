@@ -11,10 +11,10 @@ public enum Role implements GrantedAuthority {
         public static final String ADMIN = "ROLE_ADMIN";
     }
 
-    private String authority;
-    private String description;
+    private final String authority;
+    private final String description;
 
-    private Role(String authority, String description){
+    Role(String authority, String description){
         this.authority = authority;
         this.description = description;
     }

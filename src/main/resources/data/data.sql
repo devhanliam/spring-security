@@ -1,1 +1,2 @@
 insert into member values (null,'liam@naver.com','$2a$10$nDVHMpuR8W6MxPW9aDn4X.E5sAFBr5672MkezaVkGgjwI5RqpKUae','USER','liam');
+insert into member values (null,'asdsd@naver.com','$2a$10$nDVHMpuR8W6MxPW9aDn4X.E5sAFBr5672MkezaVkGgjwI5RqpKUae','ADMIN','kim');

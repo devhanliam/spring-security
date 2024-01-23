@@ -1,4 +1,4 @@
-package com.example.springsecurity.domain.service;
+package com.example.springsecurity.service;
 
 import com.example.springsecurity.authentication.JwtToken;
 import com.example.springsecurity.exception.BadJwtException;
@@ -7,21 +7,13 @@ import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -49,15 +41,6 @@ public class JwtService {
         this.key = Keys.hmacShaKeyFor(secretByteKey);
     }
 
-    public String createToken(String userSpecification) {
-        return Jwts.builder()
-                .signWith(new SecretKeySpec(secretKey.getBytes(), SignatureAlgorithm.HS512.getJcaName()))
-                .setSubject(userSpecification)
-                .setIssuer(issuer)
-                .setIssuedAt(Timestamp.valueOf(LocalDateTime.now()))
-                .setExpiration(Date.from(Instant.now().plus(expirationHours, ChronoUnit.HOURS)))
-                .compact();
-    }
 
 
     public JwtToken generateToken(Authentication authentication) {
@@ -86,37 +69,38 @@ public class JwtService {
                 .build();
     }
 
-    public Authentication getAuthentication(String accessToken) {
-        //토큰 복호화
-        Claims claims = parseClaims(accessToken);
 
+    public Collection<? extends GrantedAuthority> getRoles(String token) {
+        Claims claims = parseClaims(token);
         if (claims.get(CLAIM_NAME) == null) {
-            throw new UnsupportedJwtException("권한 정보가 없는 토큰입니다.");
+            throw new BadJwtException("권한 정보가 없는 토큰입니다.");
         }
-
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get(CLAIM_NAME).toString().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
 
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
-        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+        return authorities;
     }
 
     public boolean validateToken(String token) {
         if(token == null){
-            return false;
+            throw new BadJwtException("빈 값 토큰");
         }
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jws<Claims> claimsJws = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            claimsJws.getBody().getId();
             return true;
 
-        }catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             throw new BadJwtException("잘못된 형식의 토큰");
         } catch (UnsupportedJwtException e) {
             throw new BadJwtException("지원하지않는 형식의 토큰");
         } catch (IllegalArgumentException e) {
             throw new BadJwtException("올바르지 않은 형식의 토큰");
+        } catch (ExpiredJwtException e) {
+           //토큰 재발급 지행
+            return true;
         }
     }
 

@@ -1,6 +1,7 @@
-package com.example.springsecurity.authentication;
+package com.example.springsecurity.authentication.provider;
 
-import com.example.springsecurity.domain.service.AuthService;
+import com.example.springsecurity.authentication.MemberToken;
+import com.example.springsecurity.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;

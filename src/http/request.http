@@ -6,7 +6,26 @@ Content-Type: application/json
   "email": "liam@naver.com",
   "password": "1234"
 }
+
+### 최초 로그인 요청
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "email": "asdsd@naver.com",
+  "password": "1234"
+}
+
+### 익명 접근
+POST http://localhost:8080/api/v1/main
+Content-Type: application/json
+
+{
+  "value": "no-value"
+}
 ### 토큰 테스트
 POST http://localhost:8080/api/v1/test
-Authorization: Bearer
-###
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsaWFtQG5hdmVyLmNvbSIsImF1dGgiOiJST0xFX1VTRVIiLCJleHAiOjE3MDU2NjU4NjF9.pFjQRUAA6wEGZ6FLklwZ-z6w3vfybImRbwkQc3eZ0dc
+### 권한테스트
+POST http://localhost:8080/api/v1/admin
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhc2RzZEBuYXZlci5jb20iLCJhdXRoIjoiUk9MRV9BRE1JTiIsImV4cCI6MTcwNTY2MDc3OH0.t0sAA8c3B9-ilReJ4q41SbNKZT4Xzm7nEXfCW6mmOpk
